@@ -62,6 +62,7 @@ public class Inventory : MonoBehaviour
         {
             RightHandItem = InventorySlots[slot].Value;
             RightHandObjectPositioner.transform.parent.gameObject.SetActive(true);
+            RightHandItem.Equipped = true;
             CreateEquippedGObject(InventorySlots[slot].Value, true);
             Debug.Log("*Inventory* Equipped Gun in Right Hand");
         }
@@ -69,6 +70,7 @@ public class Inventory : MonoBehaviour
         else if (LeftHandItem == null)
         {
             LeftHandItem = InventorySlots[slot].Value;
+            LeftHandItem.Equipped = true;
             LeftHandObjectPositioner.transform.parent.gameObject.SetActive(true);
             CreateEquippedGObject(InventorySlots[slot].Value, false);
             Debug.Log("*Inventory* Equipped Gun in Left left");
@@ -77,6 +79,31 @@ public class Inventory : MonoBehaviour
         {
             Debug.Log("You have no hands free to equip an item to");
         }
+    }
+
+    private void UnequipItem()
+    {
+        if (LeftHandItem != null)
+        {
+            LeftHandObjectPositioner.transform.parent.gameObject.SetActive(false);
+            LeftHandItem.Equipped = false;
+            var lhItem = LeftHandObjectPositioner.transform.GetChild(0).gameObject;
+            LeftHandItem = null;
+            Destroy(lhItem);
+            return;
+        }
+        if (RightHandItem != null)
+        {
+            RightHandObjectPositioner.transform.parent.gameObject.SetActive(false);
+            RightHandItem.Equipped = false;
+            var rhItem = RightHandObjectPositioner.transform.GetChild(0).gameObject;
+            RightHandItem = null;
+            Destroy(rhItem);
+            return;
+        }
+
+        Debug.LogWarning("You have nothing to unequip");
+        return;
     }
 
     private void CreateEquippedGObject(Item item, bool rightHand)
@@ -89,6 +116,8 @@ public class Inventory : MonoBehaviour
             itemObject.transform.SetParent(LeftHandObjectPositioner);
 
         itemObject.transform.localPosition = Vector3.zero;
+        itemObject.transform.localRotation = Quaternion.Euler(new Vector3(-90, 0, 0));
+
     }
 
     private int GetEmptySlot()
@@ -120,29 +149,6 @@ public class Inventory : MonoBehaviour
         }
 
         return -1;
-    }
-
-    private void UnequipItem()
-    {
-        if (LeftHandItem != null)
-        {
-            LeftHandObjectPositioner.transform.parent.gameObject.SetActive(false);
-            var lhItem = LeftHandObjectPositioner.transform.GetChild(0).gameObject;
-            LeftHandItem = null;
-            Destroy(lhItem);
-            return;
-        }
-        if (RightHandItem != null)
-        {
-            RightHandObjectPositioner.transform.parent.gameObject.SetActive(false);
-            var rhItem = RightHandObjectPositioner.transform.GetChild(0).gameObject;
-            RightHandItem = null;
-            Destroy(rhItem);
-            return;
-        }
-
-        Debug.LogWarning("You have nothing to unequip");
-        return;
     }
 
     private void RemoveItem()

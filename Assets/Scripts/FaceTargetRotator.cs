@@ -7,43 +7,41 @@ using UnityEngine.Networking;
 public class FaceTargetRotator : NetworkBehaviour {
 
     public float Speed = 10;
-    public LayerMask floorMask;                      // A layer mask so that a ray can be cast just at gameobjects on the floor layer.
+    public LayerMask FloorMask;                      // A layer mask so that a ray can be cast just at gameobjects on the floor layer.
 
-    private float camRayLength = 100f;          // The length of the ray from the camera into the scene.
-    private bool initialized = false;
+    private readonly float camRayLength = 100f;          // The length of the ray from the camera into the scene.
+    private bool _initialized = false;
     private Camera _playerCamera;
 
     public void Init (Camera playerCamera)
     {
         _playerCamera = playerCamera;
         enabled = true;
-        initialized = true;
+        _initialized = true;
     }
     
     private void Update()
     {
-        if (!initialized)
+        if (!_initialized)
             return;
 
         Turning(); 
     }
 
-    void Turning()
+    private void Turning()
     {
-        Ray camRay = _playerCamera.ScreenPointToRay(CursorController.Cursor.transform.position);
+        var camRay = _playerCamera.ScreenPointToRay(CursorController.Cursor.transform.position);
         RaycastHit floorHit;
 
-        if (Physics.Raycast(camRay, out floorHit, camRayLength, floorMask))
-        {
+        if (!Physics.Raycast(camRay, out floorHit, camRayLength, FloorMask)) return;
 
-            Vector3 playerToMouse = floorHit.point - transform.position;
-            playerToMouse.y = 0f;
+        var playerToMouse = floorHit.point - transform.position;
+        playerToMouse.y = 0f;
 
-            if (playerToMouse == Vector3.zero)
-                return;
+        //if (playerToMouse == Vector3.zero)
+        //    return;
 
-            Quaternion newRotatation = Quaternion.LookRotation(playerToMouse);
-            transform.rotation = newRotatation;
-        }
+        var newRotatation = Quaternion.LookRotation(playerToMouse);
+        transform.rotation = newRotatation;
     }
 }

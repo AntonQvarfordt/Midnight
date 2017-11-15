@@ -365,9 +365,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 0.01
-  floorMask:
+  FloorMask:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 257
 --- !u!114 &114226916611187094
 MonoBehaviour:
   m_ObjectHideFlags: 1
