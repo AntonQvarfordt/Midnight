@@ -6,6 +6,7 @@ public class Gun : Item
 {
     public Transform Point;
     public GameObject ImpactAnimation;
+    public GameObject FireLine;
 
     private void Update()
     {
@@ -18,23 +19,30 @@ public class Gun : Item
 
     private void Fire()
     {
-        Debug.Log("Fire");
-
         var camRay = new Ray(Point.position, transform.forward);
-        RaycastHit floorHit;
 
-        if (!Physics.Raycast(camRay, out floorHit, 100))
+        RaycastHit hit;
+
+        if (!Physics.Raycast(camRay, out hit, 100))
             return;
 
-        FireEffects(floorHit);
-
-        Debug.Log(floorHit.transform.name);
+        FireEffects(hit);
     }
 
-    private void FireEffects (RaycastHit hit)
+    private void FireEffects(RaycastHit hit)
     {
-        var impactAnimation = Instantiate(ImpactAnimation);
-        ImpactAnimation.transform.position = hit.point;
-        ImpactAnimation.transform.rotation = Quaternion.Euler(hit.normal);
+        var impact = Instantiate(ImpactAnimation);
+        var fireLine = Instantiate(FireLine);
+        impact.transform.position = hit.point;
+        fireLine.transform.position = Point.position;
+        fireLine.transform.rotation = transform.rotation;
+
+        var gunPos = transform.position;
+        gunPos.y = 0;
+
+        var hitPoint = hit.point;
+        hitPoint.y = 0;
+
+        impact.transform.LookAt(gunPos - hitPoint);
     }
 }

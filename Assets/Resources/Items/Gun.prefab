@@ -149,6 +149,7 @@ MonoBehaviour:
   Point: {fileID: 4242318779541422}
   ImpactAnimation: {fileID: 1864959236591244, guid: 7eefe6242a2ee3842bec480e929ebd7d,
     type: 2}
+  FireLine: {fileID: 1090599674717102, guid: e671fe0eb5f29d44abf98c9f0e9c0a12, type: 2}
 --- !u!212 &212766488794201886
 SpriteRenderer:
   m_ObjectHideFlags: 1

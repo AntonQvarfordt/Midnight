@@ -38,8 +38,8 @@ public class FaceTargetRotator : NetworkBehaviour {
         var playerToMouse = floorHit.point - transform.position;
         playerToMouse.y = 0f;
 
-        //if (playerToMouse == Vector3.zero)
-        //    return;
+        if (playerToMouse == Vector3.zero)
+            return;
 
         var newRotatation = Quaternion.LookRotation(playerToMouse);
         transform.rotation = newRotatation;

@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEditor;
 #endif
 using System.IO;
+using System.Linq;
+using DG.Tweening;
 
 public static class CustomExtensionMethods
 {
@@ -35,4 +37,26 @@ public static class CustomExtensionMethods
     }
 #endif
 
+    public static void DrawLine(Vector3 from, Vector3 to, float stay, Material material)
+    {
+        var go = new GameObject();
+        var lineRenderer = go.AddComponent<LineRenderer>();
+
+        lineRenderer.sharedMaterial = material;
+        lineRenderer.startWidth = 0.1f;
+        lineRenderer.endWidth = 0.2f;
+
+        Vector3[] positions = new Vector3[2];
+        positions[0] = from;
+        positions[1] = to;
+
+        lineRenderer.SetPositions(positions);
+
+        Color2 color = new Color2(Color.clear, Color.white);
+        Color2 color2 = new Color2(Color.clear, Color.clear);
+
+        lineRenderer.DOColor(color, color2, 0.25f);
+
+        Debug.Log("DrawLine");
+    }
 }
