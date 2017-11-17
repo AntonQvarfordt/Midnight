@@ -5,8 +5,9 @@ using UnityEngine;
 public class Gun : Item
 {
     public Transform Point;
+
+    public GameObject MuzzleFlash;
     public GameObject ImpactAnimation;
-    public GameObject FireLine;
 
     private void Update()
     {
@@ -31,11 +32,13 @@ public class Gun : Item
 
     private void FireEffects(RaycastHit hit)
     {
+        var muzzleFlash = Instantiate(MuzzleFlash);
+        var flashPos = Point.transform.position;
+        muzzleFlash.transform.position = flashPos;
+        muzzleFlash.AddComponent<DestroyAfterTime>().Init(0.5f);
+
         var impact = Instantiate(ImpactAnimation);
-        var fireLine = Instantiate(FireLine);
         impact.transform.position = hit.point;
-        fireLine.transform.position = Point.position;
-        fireLine.transform.rotation = transform.rotation;
 
         var gunPos = transform.position;
         gunPos.y = 0;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -27,10 +28,11 @@ public class Tile3D : Tile
     public static void Create3DTile()
     {
         string path = EditorUtility.SaveFilePanelInProject("Save 3D Tile", "New 3D Tile", "Asset", "Save 3D Tile", "Assets");
+
         if (path == "")
             return;
-        AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<Tile3D>(), path);
+
+        AssetDatabase.CreateAsset(CreateInstance<Tile3D>(), path);
     }
 #endif
-
 }

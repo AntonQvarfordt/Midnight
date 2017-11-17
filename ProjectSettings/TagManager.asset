@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Waypoint
+  - Wall
+  - WPPathfinder
+  - Enemy
+  - Ground
+  - Obst
   layers:
   - Default
   - TransparentFX
@@ -14,7 +20,7 @@ TagManager:
   - 
   - 
   - Floor
-  - 
+  - Wall
   - 
   - 
   - 

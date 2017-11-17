@@ -5,12 +5,20 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Linq;
 
-public class GameManager : NetworkManager {
+public class GameManager : NetworkManager
+{
+    public bool AutoStart;
 
-    public static Item GetItemPrefab (string itemName)
+    private void Start()
+    {
+        if (AutoStart)
+            HostGame();
+    }
+
+    public static Item GetItemPrefab(string itemName)
     {
         var itemsList = GetItemList();
-   
+
         foreach (var item in itemsList)
         {
             var itemComponent = item.GetComponent<Item>();
@@ -51,9 +59,14 @@ public class GameManager : NetworkManager {
         return items.ToList();
     }
 
-    public static List<GameObject> GetLocalPrefabs ()
+    public static List<GameObject> GetLocalPrefabs()
     {
         GameObject[] prefabs = Resources.LoadAll<GameObject>("LocalPlayerPrefabs");
         return prefabs.ToList();
+    }
+
+    public void HostGame()
+    {
+        StartHost();
     }
 }
