@@ -393,7 +393,7 @@ namespace UnityEngine.AI
         {
             if (UnshareNavMeshAsset())
             {
-                Debug.LogWarning("Duplicating NavMeshSurface does not duplicate the referenced navmesh data", this);
+                //Debug.LogWarning("Duplicating NavMeshSurface does not duplicate the referenced navmesh data", this);
                 m_NavMeshData = null;
             }
 

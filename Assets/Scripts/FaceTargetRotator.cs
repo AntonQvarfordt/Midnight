@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class FaceTargetRotator : NetworkBehaviour {
-
+public class FaceTargetRotator : NetworkBehaviour
+{
     public float Speed = 10;
     public LayerMask FloorMask;                      // A layer mask so that a ray can be cast just at gameobjects on the floor layer.
 
@@ -13,19 +13,19 @@ public class FaceTargetRotator : NetworkBehaviour {
     private bool _initialized = false;
     private Camera _playerCamera;
 
-    public void Init (Camera playerCamera)
+    public void Init(Camera playerCamera)
     {
-        _playerCamera = playerCamera;
         enabled = true;
+        _playerCamera = playerCamera;
         _initialized = true;
     }
-    
+
     private void Update()
     {
         if (!_initialized)
             return;
 
-        Turning(); 
+        Turning();
     }
 
     private void Turning()

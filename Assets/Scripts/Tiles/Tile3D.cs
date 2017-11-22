@@ -10,6 +10,7 @@ using UnityEditor;
 
 public class Tile3D : Tile
 {
+    
     public bool Blocker;
 
     [ExecuteInEditMode]
