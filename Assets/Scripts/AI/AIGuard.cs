@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class AIGuard : AIBase
 {
-
     public LayerMask FloorMask;
 
     public Camera CCamera;
 
     private void Update()
     {
-
-
         if (Input.GetMouseButtonDown(0))
         {
             var camRay = CCamera.ScreenPointToRay(Input.mousePosition);

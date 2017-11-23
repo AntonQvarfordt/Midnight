@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class AISight : MonoBehaviour
@@ -9,13 +11,39 @@ public class AISight : MonoBehaviour
     public float SightDistance;
     public float SightCone;
 
-    private void Update()
+    public Vector3 arcOrigin;
+    public Vector3 arcEnd;
+
+    public Vector3 AINormalVector;
+
+    public List<KeyValuePair<GameObject, RaycastHit>> VisibleObjects = new List<KeyValuePair<GameObject, RaycastHit>>();
+
+    private void Awake()
     {
-        if (Input.GetKeyDown("e"))
+
+    }
+
+    private void OnGUI()
+    {
+        LookUpdate();
+    }
+
+    private void LookUpdate()
+    {
+        arcOrigin = transform.forward;
+        arcOrigin.x -= SightCone * 0.5f;
+        arcEnd = arcOrigin;
+        arcEnd.x += SightCone;
+
+        var hitsInSight = ArcRaycast(arcOrigin, arcEnd);
+        VisibleObjects.Clear();
+
+
+
+        for (var i = 0; i < hitsInSight.Length; i++)
         {
-            var arcAnchor = new Vector3(-SightCone * 0.01f, 0, 1);
-            var arcEnd = new Vector3(arcAnchor.x + (SightCone * 0.01f), 0, 1);
-            ArcRaycast(arcAnchor, arcEnd, 20);
+            RaycastHit hit = hitsInSight[i];
+            VisibleObjects.Add(new KeyValuePair<GameObject, RaycastHit>(hit.transform.gameObject, hit));
         }
     }
 
@@ -35,7 +63,7 @@ public class AISight : MonoBehaviour
 
             RaycastHit hit;
 
-            if (Physics.Raycast(origin, rayVectorStep, out hit, SightDistance, RaycastAgainstLayers))
+            if (Physics.Raycast(origin, rayVectorStep * SightDistance, out hit, RaycastAgainstLayers))
             {
                 if (returnArray.Contains(hit))
                     continue;
@@ -43,20 +71,14 @@ public class AISight : MonoBehaviour
                 returnArray.Add(hit);
             }
 
-            //#region debug
+            #region debug
+
             //Debug.DrawRay(transform.position, rayVectorStep*SightDistance, Color.cyan, 3);
             //Debug.Log("Arc Raycast Iteration Point: " + rayVectorStep);
-            //#endregion
-            //Debug.Break();
+            #endregion
         }
-
-        foreach (RaycastHit hit in returnArray)
-        {
-            Debug.Log(hit.transform.name);
-        }
-
         return returnArray.ToArray();
 
-        
+
     }
 }

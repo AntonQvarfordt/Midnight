@@ -2,12 +2,15 @@ using UnityEditor.IMGUI.Controls;
 using UnityEditorInternal;
 using UnityEngine.AI;
 using UnityEngine;
+#pragma warning disable 0618
+#pragma warning disable 0414
 
 namespace UnityEditor.AI
 {
     [CanEditMultipleObjects]
     [CustomEditor(typeof(NavMeshModifierVolume))]
     class NavMeshModifierVolumeEditor : Editor
+
     {
         SerializedProperty m_AffectedAgents;
         SerializedProperty m_Area;
@@ -17,8 +20,9 @@ namespace UnityEditor.AI
         static Color s_HandleColor = new Color(187f, 138f, 240f, 210f) / 255;
         static Color s_HandleColorDisabled = new Color(187f * 0.75f, 138f * 0.75f, 240f * 0.75f, 100f) / 255;
 
-        static int s_HandleControlIDHint = typeof(NavMeshModifierVolumeEditor).Name.GetHashCode();
-        BoxBoundsHandle m_BoundsHandle = new BoxBoundsHandle(s_HandleControlIDHint);
+        private static int _sHandleControlIdHint = typeof(NavMeshModifierVolumeEditor).Name.GetHashCode();
+        readonly BoxBoundsHandle _mBoundsHandle = new BoxBoundsHandle();
+
 
         bool editingCollider
         {
@@ -123,16 +127,16 @@ namespace UnityEditor.AI
             var color = vol.enabled ? s_HandleColor : s_HandleColorDisabled;
             using (new Handles.DrawingScope(color, vol.transform.localToWorldMatrix))
             {
-                m_BoundsHandle.center = vol.center;
-                m_BoundsHandle.size = vol.size;
+                _mBoundsHandle.center = vol.center;
+                _mBoundsHandle.size = vol.size;
 
                 EditorGUI.BeginChangeCheck();
-                m_BoundsHandle.DrawHandle();
+                _mBoundsHandle.DrawHandle();
                 if (EditorGUI.EndChangeCheck())
                 {
                     Undo.RecordObject(vol, "Modified NavMesh Modifier Volume");
-                    Vector3 center = m_BoundsHandle.center;
-                    Vector3 size = m_BoundsHandle.size;
+                    Vector3 center = _mBoundsHandle.center;
+                    Vector3 size = _mBoundsHandle.size;
                     vol.center = center;
                     vol.size = size;
                     EditorUtility.SetDirty(target);
