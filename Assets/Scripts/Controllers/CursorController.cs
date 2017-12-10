@@ -5,7 +5,6 @@ using UnityEngine;
 public class CursorController : LocalPrefab {
 
     public static CursorController Cursor;
-
     RectTransform rTransform;
 
     [SerializeField]

@@ -30,9 +30,8 @@ public class AIGuard : AIBase
         }
     }
 
-    private void Move(Vector3 position)
+    public void Move(Vector3 position)
     {
         Agent.SetDestination(position);
     }
-
 }

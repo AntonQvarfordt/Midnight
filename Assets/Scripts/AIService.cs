@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.AI;
+using System.Collections;
 
 public enum PatrolGroups
 {
@@ -20,8 +21,6 @@ public enum SpawnTypes
     Object
 }
 
-
-
 public enum AIType
 {
     Guard
@@ -29,23 +28,21 @@ public enum AIType
 
 public class AIService : NetworkBehaviour
 {
+    #region properties
+    public int PatrolShiftMovementRigidity;
+
     public GameObject GuardAIPrefab;
 
     public List<PatrolPoint> PatrolPointsOnMap = new List<PatrolPoint>();
     public List<SpawnPoint> SpawnPointsOnMap = new List<SpawnPoint>();
-
     public List<KeyValuePair<PatrolGroups, List<AIBase>>> AcitvePatrolGroups = new List<KeyValuePair<PatrolGroups, List<AIBase>>>();
+    #endregion
 
-    public static List<PatrolGroups> PatrolGroupList = new List<PatrolGroups>();
+    #region monoCalls
 
     private void Awake()
     {
-        PatrolGroupList.Add(PatrolGroups.A);
-        PatrolGroupList.Add(PatrolGroups.B);
-        PatrolGroupList.Add(PatrolGroups.D);
-        PatrolGroupList.Add(PatrolGroups.E);
-        PatrolGroupList.Add(PatrolGroups.Blank);
-
+        InitPatrolGroups();
         GatherControlPoints();
         GatherSpawnPoints();
     }
@@ -64,6 +61,10 @@ public class AIService : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region publicFunctions
+
     public void SubscribeToPatrolGroup(AIBase ai, PatrolGroups group)
     {
         var patrolGKeys = GetPatrolGroupKeys();
@@ -80,6 +81,15 @@ public class AIService : NetworkBehaviour
         }
     }
 
+    #endregion
+
+    #region initializations
+
+    private void AssignAllAIAgentsToPatrolGroupA ()
+    {
+
+    }
+
     private void InitPatrolGroups()
     {
         var iterations = 5;
@@ -89,6 +99,32 @@ public class AIService : NetworkBehaviour
             AcitvePatrolGroups.Add(new KeyValuePair<PatrolGroups, List<AIBase>>(PatrolGroups.A, new List<AIBase>()));
         }
     }
+
+    private void GatherSpawnPoints()
+    {
+        var pPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
+
+        foreach (var pObj in pPoints)
+        {
+            SpawnPointsOnMap.Add(pObj.GetComponent<SpawnPoint>());
+        }
+
+        StartPatrolShiftClock();
+    }
+
+    private void PopulateSpawnPoints()
+    {
+        foreach (var spawnPoint in SpawnPointsOnMap)
+        {
+            SpawnAIActor(AIType.Guard, spawnPoint);
+        }
+
+
+    }
+
+    #endregion
+
+    #region functions
 
     private List<PatrolGroups> GetPatrolGroupKeys()
     {
@@ -109,8 +145,8 @@ public class AIService : NetworkBehaviour
 
         for (int i = 0; i < patrolGKeys.Count; i++)
         {
-            if (index == (int)patrolGKeys[i]) 
-            return patrolGKeys[i];
+            if (index == (int)patrolGKeys[i])
+                return patrolGKeys[i];
         }
 
         return PatrolGroups.Blank;
@@ -126,32 +162,66 @@ public class AIService : NetworkBehaviour
         }
     }
 
-    private void GatherSpawnPoints()
-    {
-        var pPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
-
-        foreach (var pObj in pPoints)
-        {
-            SpawnPointsOnMap.Add(pObj.GetComponent<SpawnPoint>());
-        }
-    }
-
-    private void PopulateSpawnPoints ()
-    {
-        foreach (var spawnPoint in SpawnPointsOnMap)
-        {
-            SpawnAIActor(AIType.Guard, spawnPoint);
-        }
-    }
-
-    private void SpawnAIActor (AIType type, SpawnPoint point)
+    private void SpawnAIActor(AIType type, SpawnPoint point)
     {
         var aiGuard = Instantiate(GuardAIPrefab);
         var spawnPos = point.transform.position;
         var navMesh = aiGuard.GetComponent<NavMeshAgent>();
         spawnPos.y = 0;
         navMesh.Warp(spawnPos);
-        //Debug.Log(point.transform.position);
-        //aiGuard.transform.position = point.transform.position;
+
+        SubscribeToPatrolGroup(aiGuard.GetComponent<AIGuard>(), PatrolGroups.A);
+    }
+
+    #endregion
+
+    private void StartPatrolShiftClock()
+    {
+        StartCoroutine("PatrolClockIterator", PatrolShiftMovementRigidity);
+    }
+
+    private void StopPatrolShiftClock()
+    {
+        StopCoroutine("PatrolClockIterator");
+    }
+
+    private void EngagePatrolPointTransition(AIGuard guard, Vector3 position)
+    {
+
+        guard.Move(position);
+    }
+
+    private AIBase GetRandomGuard ()
+    {
+        return null;
+    }
+
+    private PatrolPoint GetRandomPatrolPoint ()
+    {
+        return null;
+    }
+
+    private static AIGuard NewMethod(KeyValuePair<PatrolGroups, List<AIBase>> aiActor)
+    {
+        var agentList = (List<AIBase>)aiActor.Value;
+        var agent = (AIGuard)agentList[Random.Range(0, agentList.Count)];
+        return agent;
+    }
+
+    private IEnumerator PatrolClockIterator (int randomNumberFromSeed)
+    {
+        var tickValue = Random.Range(0, PatrolShiftMovementRigidity);
+
+        while (tickValue != 1)
+        {
+            Debug.Log("Clock Tick " + tickValue);
+            yield return new WaitForSeconds(4);
+            tickValue = Random.Range(0, PatrolShiftMovementRigidity);
+        }
+
+        EngagePatrolPointTransition();
+
+
+
     }
 }

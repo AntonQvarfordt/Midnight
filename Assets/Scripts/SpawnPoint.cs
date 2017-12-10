@@ -5,8 +5,8 @@ public class SpawnPoint : MonoBehaviour
 {
     [Header("Set false if spawning from script")]
     public bool AutomaticSpawn = true;
-
     [Space]
+
     public SpawnTypes SpawnType;
     public AIType ActorType;
 
