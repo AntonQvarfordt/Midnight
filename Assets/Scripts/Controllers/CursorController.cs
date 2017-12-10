@@ -22,9 +22,9 @@ public class CursorController : LocalPrefab {
         Cursor = this;
         rTransform = (RectTransform)transform;
         mouseLastPos = Input.mousePosition;
-        UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = false;
-        rTransform.anchoredPosition = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        //rTransform.anchoredPosition = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
         enabled = true;
     }
 
@@ -37,5 +37,10 @@ public class CursorController : LocalPrefab {
     private void LateUpdate()
     {
         mouseLastPos = Input.mousePosition;
+    }
+
+    public void Bop ()
+    {
+        GetComponent<CursorEffects>().Bop(transform);
     }
 }

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using DG.Tweening;
-using UnityStandardAssets.Cameras;
+//using DG.Tweening;
 
 public class Player : NetworkBehaviour
 {
@@ -21,7 +20,7 @@ public class Player : NetworkBehaviour
         SpawnCursor();
         SpawnCamera();
 
-        PlayerCamera.gameObject.GetComponent<CameraFollow>().Init(transform);
+        //PlayerCamera.gameObject.GetComponent<CameraFollow>().Init(transform);
         GetComponent<FaceTargetRotator>().Init(PlayerCamera);
         PlayerCursor.GetComponent<CursorController>().enabled = true;
     }
@@ -38,6 +37,6 @@ public class Player : NetworkBehaviour
         PlayerCamera = Instantiate(GameManager.GetLocalPlayerPrefab("PlayerCamera")).GetComponent<Camera>();
         PlayerCamera.transform.position = transform.position;
         PlayerCamera.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
-        PlayerCamera.transform.DOMoveY(10, 2);
+        //PlayerCamera.transform.DOMoveY(10, 2);
     }
 }

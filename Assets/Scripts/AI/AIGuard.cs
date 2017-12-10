@@ -5,6 +5,7 @@ using UnityEngine;
 public class AIGuard : AIBase
 {
     public LayerMask FloorMask;
+    public CursorController Cursor;
 
     public Camera CCamera;
 
@@ -12,14 +13,14 @@ public class AIGuard : AIBase
     {
         if (Input.GetMouseButtonDown(0))
         {
-            var camRay = CCamera.ScreenPointToRay(Input.mousePosition);
+            var camRay = CCamera.ScreenPointToRay(Cursor.transform.position);
             RaycastHit floorHit;
 
             if (!Physics.Raycast(camRay, out floorHit, 100, FloorMask)) return;
 
-            Debug.Log("AI Click Point: " + floorHit.point);
-
+            //Move(Cursor.transform.position);
             Move(floorHit.point);
+            Cursor.Bop();
         }
     }
 

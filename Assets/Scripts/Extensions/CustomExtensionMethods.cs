@@ -6,7 +6,7 @@ using UnityEditor;
 #endif
 using System.IO;
 using System.Linq;
-using DG.Tweening;
+//using DG.Tweening;
 
 public static class CustomExtensionMethods
 {
@@ -52,10 +52,10 @@ public static class CustomExtensionMethods
 
         lineRenderer.SetPositions(positions);
 
-        Color2 color = new Color2(Color.clear, Color.white);
-        Color2 color2 = new Color2(Color.clear, Color.clear);
+        //Color2 color = new Color2(Color.clear, Color.white);
+        //Color2 color2 = new Color2(Color.clear, Color.clear);
 
-        lineRenderer.DOColor(color, color2, 0.25f);
+        //lineRenderer.DOColor(color, color2, 0.25f);
 
         Debug.Log("DrawLine");
     }
