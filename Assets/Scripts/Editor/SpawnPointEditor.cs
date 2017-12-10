@@ -12,10 +12,6 @@ public class SpawnPointEditor : Editor {
 
         var targetScript = (SpawnPoint)target;
 
-        if (GUILayout.Button("Default"))
-        {
-            targetScript.SetDefaultValues();
-        }
     }
 
 }

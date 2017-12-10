@@ -12,6 +12,8 @@ public class CursorEffects : MonoBehaviour {
     Color InnerSpriteStartColor;
     Color OuterSpriteStartColor;
 
+    private bool _playing;
+
     private void Awake()
     {
         InnerSpriteStartColor = InnerSprite.color;
@@ -20,13 +22,17 @@ public class CursorEffects : MonoBehaviour {
 
     public void Bop (Transform controller)
     {
-        controller.localScale = Vector3.one * 2;
+        if (_playing)
+            return;
+
+        _playing = true;
+        controller.localScale = Vector3.one * 4;
         controller.DOScale(1, 0.5f).SetEase(Ease.InBack);
 
-        OuterSprite.color = Color.red;
+        OuterSprite.color = Color.magenta;
         OuterSprite.DOColor(OuterSpriteStartColor, 1f);
 
-        InnerSprite.color = Color.red;
-        InnerSprite.DOColor(InnerSpriteStartColor, 1f);
+        InnerSprite.color = Color.cyan;
+        InnerSprite.DOColor(InnerSpriteStartColor, 1f).OnComplete(() => _playing = false);
     }
 }

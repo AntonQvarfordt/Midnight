@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.AI;
 
 public enum PatrolGroups
 {
@@ -18,9 +20,19 @@ public enum SpawnTypes
     Object
 }
 
-public class AIService : MonoBehaviour
+
+
+public enum AIType
 {
+    Guard
+}
+
+public class AIService : NetworkBehaviour
+{
+    public GameObject GuardAIPrefab;
+
     public List<PatrolPoint> PatrolPointsOnMap = new List<PatrolPoint>();
+    public List<SpawnPoint> SpawnPointsOnMap = new List<SpawnPoint>();
 
     public List<KeyValuePair<PatrolGroups, List<AIBase>>> AcitvePatrolGroups = new List<KeyValuePair<PatrolGroups, List<AIBase>>>();
 
@@ -33,11 +45,23 @@ public class AIService : MonoBehaviour
         PatrolGroupList.Add(PatrolGroups.D);
         PatrolGroupList.Add(PatrolGroups.E);
         PatrolGroupList.Add(PatrolGroups.Blank);
+
+        GatherControlPoints();
+        GatherSpawnPoints();
     }
 
     private void Start()
     {
-        PopulateControlPoints();
+
+        PopulateSpawnPoints();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown("e"))
+        {
+            SpawnAIActor(AIType.Guard, SpawnPointsOnMap[Random.Range(0, 4)]);
+        }
     }
 
     public void SubscribeToPatrolGroup(AIBase ai, PatrolGroups group)
@@ -92,7 +116,7 @@ public class AIService : MonoBehaviour
         return PatrolGroups.Blank;
     }
 
-    private void PopulateControlPoints()
+    private void GatherControlPoints()
     {
         var pPoints = GameObject.FindGameObjectsWithTag("Waypoint");
 
@@ -100,5 +124,34 @@ public class AIService : MonoBehaviour
         {
             PatrolPointsOnMap.Add(pObj.GetComponent<PatrolPoint>());
         }
+    }
+
+    private void GatherSpawnPoints()
+    {
+        var pPoints = GameObject.FindGameObjectsWithTag("SpawnPoint");
+
+        foreach (var pObj in pPoints)
+        {
+            SpawnPointsOnMap.Add(pObj.GetComponent<SpawnPoint>());
+        }
+    }
+
+    private void PopulateSpawnPoints ()
+    {
+        foreach (var spawnPoint in SpawnPointsOnMap)
+        {
+            SpawnAIActor(AIType.Guard, spawnPoint);
+        }
+    }
+
+    private void SpawnAIActor (AIType type, SpawnPoint point)
+    {
+        var aiGuard = Instantiate(GuardAIPrefab);
+        var spawnPos = point.transform.position;
+        var navMesh = aiGuard.GetComponent<NavMeshAgent>();
+        spawnPos.y = 0;
+        navMesh.Warp(spawnPos);
+        //Debug.Log(point.transform.position);
+        //aiGuard.transform.position = point.transform.position;
     }
 }

@@ -1,27 +1,18 @@
 ﻿using UnityEngine.Networking;
 using UnityEngine;
 
-public class SpawnPoint : NetworkBehaviour
+public class SpawnPoint : MonoBehaviour
 {
     [Header("Set false if spawning from script")]
     public bool AutomaticSpawn = true;
 
     [Space]
     public SpawnTypes SpawnType;
+    public AIType ActorType;
 
     public string DefaultActor;
 
-    public AIBase AIToSpawn;
-
-    public override void OnStartServer()
-    {
-
-    }
-
-    public void SetDefaultValues ()
-    {
-
-    }
+    public GameObject AIToSpawn;
 
     void OnDrawGizmos()
     {

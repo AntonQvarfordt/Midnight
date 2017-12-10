@@ -5,22 +5,28 @@ using UnityEngine;
 public class AIGuard : AIBase
 {
     public LayerMask FloorMask;
-    public CursorController Cursor;
+    public CursorController CCursor;
 
     public Camera CCamera;
+
+    private void Start()
+    {
+        CCamera = Camera.main;
+        CCursor = CursorController.Cursor;
+    }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            var camRay = CCamera.ScreenPointToRay(Cursor.transform.position);
+            var camRay = CCamera.ScreenPointToRay(CCursor.transform.position);
             RaycastHit floorHit;
 
             if (!Physics.Raycast(camRay, out floorHit, 100, FloorMask)) return;
 
             //Move(Cursor.transform.position);
             Move(floorHit.point);
-            Cursor.Bop();
+            CCursor.Bop();
         }
     }
 

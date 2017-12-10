@@ -24,7 +24,7 @@ public class CursorController : LocalPrefab {
         mouseLastPos = Input.mousePosition;
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = false;
-        //rTransform.anchoredPosition = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        rTransform.anchoredPosition = Vector3.zero;
         enabled = true;
     }
 
