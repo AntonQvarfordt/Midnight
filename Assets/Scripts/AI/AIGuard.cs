@@ -15,19 +15,9 @@ public class AIGuard : AIBase
         CCursor = CursorController.Cursor;
     }
 
-    private void Update()
+    public void MoveToRandomSpawnPoint ()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            var camRay = CCamera.ScreenPointToRay(CCursor.transform.position);
-            RaycastHit floorHit;
 
-            if (!Physics.Raycast(camRay, out floorHit, 100, FloorMask)) return;
-
-            //Move(Cursor.transform.position);
-            Move(floorHit.point);
-            CCursor.Bop();
-        }
     }
 
     public void Move(Vector3 position)

@@ -8,6 +8,7 @@ public class SpawnPoint : MonoBehaviour
     [Space]
 
     public SpawnTypes SpawnType;
+
     public AIType ActorType;
 
     public string DefaultActor;

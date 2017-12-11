@@ -7,6 +7,7 @@ public class PatrolPoint : MonoBehaviour
     public bool Occupied;
     public bool Disabled;
     public int FloorLevel;
+
     [Range(0, 100)]
     public float Weight = 50;
 
