@@ -256,7 +256,7 @@ namespace WhiteCat.Tween
 			previewRect.xMax = rect.xMin - 8f;
 
 			// 鼠标开始拖动
-			if (Event.current.type == EventType.mouseDown)
+			if (Event.current.type == EventType.MouseDown)
 			{
 				if (previewRect.Contains(Event.current.mousePosition))
 				{
@@ -265,7 +265,7 @@ namespace WhiteCat.Tween
 			}
 
 			// 鼠标结束拖动
-			if (Event.current.rawType == EventType.mouseUp)
+			if (Event.current.rawType == EventType.MouseUp)
 			{
 				if (_isDraggingInEditor)
 				{

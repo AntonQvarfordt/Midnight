@@ -1,17 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class ActorMobile : MonoBehaviour, IDamageable
+public abstract class ActorMobile : NetworkBehaviour, IDamageable
 {
-    public virtual void Damage(float damage)
+    private int id;
+
+    public int Id
     {
-        throw new System.NotImplementedException();
+        get { return id; }
+        set { id = value; }
     }
 
-    public virtual void Killed()
-    {
-        throw new System.NotImplementedException();
-    }
+    public abstract void Damage(float damage);
+
+    public abstract void Killed();
 
 }

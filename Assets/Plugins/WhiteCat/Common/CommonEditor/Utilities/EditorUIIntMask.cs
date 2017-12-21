@@ -86,7 +86,7 @@ namespace WhiteCat.Editor
 			{
 				switch (Event.current.type)
 				{
-					case EventType.mouseMove:
+					case EventType.MouseMove:
 						int newLine = Mathf.Clamp((int)((Event.current.mousePosition.y - rect.y) / EditorGUIUtility.singleLineHeight), 0, _mode == PopupMode.Bit ? (_count-1) : (_count + 1));
 						if (_hoverLine != newLine)
 						{

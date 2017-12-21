@@ -22,11 +22,13 @@ public class AIService : NetworkBehaviour
     public int PatrolShiftMovementRigidity;
 
     public GameObject GuardAIPrefab;
+    public Transform AIActorRoot;
 
     public List<AIBase> ActiveAiAgents = new List<AIBase>();
     public static List<PatrolPoint> PatrolPointsOnMap = new List<PatrolPoint>();
     public static List<SpawnPoint> SpawnPointsOnMap = new List<SpawnPoint>();
 
+   
 
     private void Awake()
     {
@@ -42,7 +44,7 @@ public class AIService : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("e"))
+        if (Input.GetKeyDown("k"))
         {
             SpawnAIActor(AIType.Guard, SpawnPointsOnMap[Random.Range(0, 4)]);
         }
@@ -74,7 +76,6 @@ public class AIService : NetworkBehaviour
         }
     }
 
-
     private void GatherControlPoints()
     {
         var pPoints = GameObject.FindGameObjectsWithTag("Waypoint");
@@ -96,6 +97,8 @@ public class AIService : NetworkBehaviour
 
         ActiveAiAgents.Add(aiGuard.GetComponent<AIGuard>());
 
+        aiGuard.transform.SetParent(AIActorRoot);
+
         navMesh.Warp(spawnPos);
     }
 
@@ -109,12 +112,6 @@ public class AIService : NetworkBehaviour
     private void StopPatrolShiftClock()
     {
         StopCoroutine("PatrolClockIterator");
-    }
-
-    private void EngagePatrolPointTransition(AIGuard guard, Vector3 position)
-    {
-
-        guard.Move(position);
     }
 
     private AIBase GetRandomGuard ()
@@ -144,11 +141,5 @@ public class AIService : NetworkBehaviour
             yield return new WaitForSeconds(4);
             tickValue = Random.Range(0, PatrolShiftMovementRigidity);
         }
-
-
-
-
-
     }
-
 }

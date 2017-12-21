@@ -5,35 +5,92 @@ using UnityEngine.Networking;
 
 public class PlayerMovement : NetworkBehaviour
 {
+    public LayerMask GroundLayer;
 	public float Speed = 5;
-
-	private float hInput;
-	private float vInput;
+    public bool _grounded;
+    public Transform GroundCheckPosition;
 
 	[SerializeField]
 	private Vector3 movement;
 
-	public Vector3 GetMovement
+    private float hInput;
+    private float vInput;
+
+    private Rigidbody _rigidbody;
+
+    private Vector3 savedPos;
+    [SerializeField]
+    private Vector3 deltaPos;
+
+    public Vector3 GetMovement
 	{
 		get { return movement; }
 	}
 
-	private void Update()
+    public bool IsGrounded
+    {
+        get { return _grounded; }
+    }
+
+    public float GetInputH
+    {
+        get { return hInput; }
+    }
+
+    public float GetInputV
+    {
+        get { return vInput; }
+    }
+
+    public float GetMovementSpeed
+    {
+        get { return deltaPos.magnitude; }
+    }
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+        savedPos = transform.position;
+
+    }
+
+    private void Update()
 	{
 		hInput = Input.GetAxis("Horizontal");
 		vInput = Input.GetAxis("Vertical");
 
+        _grounded = IsGroundedCheck();
 		SetMovement();
+        FaceMovementDirection();
+        DodgeRoll();
 
-		bool isBlocked = IsBlockedByObstacle();
+
+        bool isBlocked = IsBlockedByObstacle();
 
 		if (isBlocked)
 			return;
+    }
 
-		transform.Translate(movement, Space.World);
-	}
+    private void CalculateDeltaPos ()
+    {
+        deltaPos = transform.position - savedPos;
+        deltaPos *= 10;
+        Debug.Log(_rigidbody.velocity);
 
-	private bool IsBlockedByObstacle()
+
+        //if (deltaPos.magnitude < 0.05f)
+        //    deltaPos = Vector3.zero;
+
+        savedPos = transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        _rigidbody.MovePosition(transform.position+=movement);
+        CalculateDeltaPos();
+    }
+
+    private bool IsBlockedByObstacle()
 	{
 		var sightHit = MoveDirectionRaycast(movement);
 		if (sightHit != null)
@@ -51,8 +108,41 @@ public class PlayerMovement : NetworkBehaviour
 	private void SetMovement()
 	{
 		movement.Set(hInput, 0, vInput);
-		movement = movement * Speed * Time.deltaTime;
+		movement = movement * Speed;
 	}
+
+    private bool IsGroundedCheck ()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(GroundCheckPosition.position, Vector3.down, out hit, 0.2f, GroundLayer))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void FaceMovementDirection ()
+    {
+        var dir = new Vector3(hInput, 0, vInput);
+        var rotationSpeed = 50;
+        if (dir != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(dir),
+                Time.deltaTime * rotationSpeed
+            );
+        }
+    }
+
+    private void DodgeRoll ()
+    {
+        Debug.DrawRay(transform.position, deltaPos);
+        //Debug.Log(deltaPos);
+    }
 
 	private RaycastHit? MoveDirectionRaycast(Vector3 movement)
 	{

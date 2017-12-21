@@ -5,23 +5,10 @@ using UnityEngine;
 public class AIGuard : AIBase
 {
     public LayerMask FloorMask;
-    public CursorController CCursor;
+    public Animator Statemachine;
 
-    public Camera CCamera;
-
-    private void Start()
-    {
-        CCamera = Camera.main;
-        CCursor = CursorController.Cursor;
-    }
-
-    public void MoveToRandomSpawnPoint ()
+    private void Awake()
     {
 
-    }
-
-    public void Move(Vector3 position)
-    {
-        Agent.SetDestination(position);
     }
 }

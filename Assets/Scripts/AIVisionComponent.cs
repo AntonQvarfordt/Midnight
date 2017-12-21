@@ -114,7 +114,6 @@ public class AIVisionComponent : MonoBehaviour
 
     private void DrawFieldOfView()
     {
-
         int stepCount = Mathf.RoundToInt(viewAngle * meshResolution);
         float stepAngleSize = viewAngle / stepCount;
         List<Vector3> viewPoints = new List<Vector3>();
@@ -213,5 +212,10 @@ public class AIVisionComponent : MonoBehaviour
         {
             return new ViewCastInfo(false, Eyes.position + dir * viewRadius, viewRadius, globalAngle);
         }
+    }
+
+    public List<Transform> GetVisibleTargets ()
+    {
+        return visibleTargets;
     }
 }

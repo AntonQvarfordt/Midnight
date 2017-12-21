@@ -36,10 +36,10 @@ public class FaceTargetRotator : NetworkBehaviour
         if (!Physics.Raycast(camRay, out floorHit, camRayLength, FloorMask)) return;
 
         var playerToMouse = floorHit.point - transform.position;
-        playerToMouse.y = 0f;
+        //playerToMouse.y = 0;
 
-        if (playerToMouse == Vector3.zero)
-            return;
+        //if (playerToMouse == Vector3.zero)
+        //    return;
 
         var newRotatation = Quaternion.LookRotation(playerToMouse);
         transform.rotation = newRotatation;

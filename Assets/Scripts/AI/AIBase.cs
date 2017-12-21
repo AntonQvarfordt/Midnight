@@ -19,4 +19,14 @@ public class AIBase : ActorMobile
     {
         _navAgent = GetComponent<NavMeshAgent>();
     }
+
+    public override void Damage(float damage)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Killed()
+    {
+        throw new System.NotImplementedException();
+    }
 }

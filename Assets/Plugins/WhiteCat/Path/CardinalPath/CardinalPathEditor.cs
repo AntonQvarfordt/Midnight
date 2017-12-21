@@ -136,7 +136,7 @@ namespace WhiteCat.Paths
 				Handles.EndGUI();
 
 				// 居中元素
-				if (Event.current.type == EventType.keyDown)
+				if (Event.current.type == EventType.KeyDown)
 				{
 					if (Event.current.character == 'f' || Event.current.character == 'F')
 					{
