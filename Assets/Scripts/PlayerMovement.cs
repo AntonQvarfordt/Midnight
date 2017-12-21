@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using DG.Tweening;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -9,6 +10,8 @@ public class PlayerMovement : NetworkBehaviour
 	public float Speed = 5;
     public bool _grounded;
     public Transform GroundCheckPosition;
+
+    public float DodgeDistance = 4;
 
 	[SerializeField]
 	private Vector3 movement;
@@ -21,6 +24,8 @@ public class PlayerMovement : NetworkBehaviour
     private Vector3 savedPos;
     [SerializeField]
     private Vector3 deltaPos;
+
+    private bool _movementBlocked;
 
     public Vector3 GetMovement
 	{
@@ -60,9 +65,18 @@ public class PlayerMovement : NetworkBehaviour
 		vInput = Input.GetAxis("Vertical");
 
         _grounded = IsGroundedCheck();
+
+        if (_movementBlocked)
+            return;
+
 		SetMovement();
         FaceMovementDirection();
-        DodgeRoll();
+
+
+        if (Input.GetButtonDown("Dodge"))
+        {
+            DodgeRoll();
+        }
 
 
         bool isBlocked = IsBlockedByObstacle();
@@ -75,12 +89,7 @@ public class PlayerMovement : NetworkBehaviour
     {
         deltaPos = transform.position - savedPos;
         deltaPos *= 10;
-        Debug.Log(_rigidbody.velocity);
-
-
-        //if (deltaPos.magnitude < 0.05f)
-        //    deltaPos = Vector3.zero;
-
+        //Debug.Log(GetMovementSpeed);
         savedPos = transform.position;
     }
 
@@ -88,6 +97,16 @@ public class PlayerMovement : NetworkBehaviour
     {
         _rigidbody.MovePosition(transform.position+=movement);
         CalculateDeltaPos();
+    }
+
+    public void BlockMovement ()
+    {
+        _movementBlocked = true;
+    }
+
+    public void UnblockMovement()
+    {
+        _movementBlocked = false;
     }
 
     private bool IsBlockedByObstacle()
@@ -140,8 +159,24 @@ public class PlayerMovement : NetworkBehaviour
 
     private void DodgeRoll ()
     {
-        Debug.DrawRay(transform.position, deltaPos);
-        //Debug.Log(deltaPos);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, DodgeDistance))
+        {
+            Debug.Log(hit.transform.name);
+            return;
+        }
+        BlockMovement();
+        GetComponent<Animator>().SetTrigger("Dodge");
+        var targetPos = transform.position + (transform.forward * DodgeDistance);
+        _rigidbody.isKinematic = true;
+        transform.DOMove(targetPos, 0.55f).SetEase(Ease.InQuad).OnComplete(DodgeRollComplete);
+        
+    }
+
+    private void DodgeRollComplete()
+    {
+        _rigidbody.isKinematic = false;
+        UnblockMovement();
     }
 
 	private RaycastHit? MoveDirectionRaycast(Vector3 movement)
