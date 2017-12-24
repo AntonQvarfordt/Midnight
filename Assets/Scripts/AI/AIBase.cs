@@ -15,7 +15,7 @@ public class AIBase : ActorMobile
         get { return _navAgent; }
     }
 
-    public void Awake()
+    public virtual void Awake()
     {
         _navAgent = GetComponent<NavMeshAgent>();
     }

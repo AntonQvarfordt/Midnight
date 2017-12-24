@@ -19,6 +19,7 @@ public enum AIType
 public class AIService : NetworkBehaviour
 {
     #region properties
+    public static AIService Instance;
     public int PatrolShiftMovementRigidity;
 
     public GameObject GuardAIPrefab;
@@ -28,31 +29,28 @@ public class AIService : NetworkBehaviour
     public static List<PatrolPoint> PatrolPointsOnMap = new List<PatrolPoint>();
     public static List<SpawnPoint> SpawnPointsOnMap = new List<SpawnPoint>();
 
-   
-
     private void Awake()
     {
-        GatherControlPoints();
-        GatherSpawnPoints();
-    }
-
-    private void Start()
-    {
-
-        //PopulateSpawnPoints();
+        if (Instance == null)
+            Instance = this;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown("k"))
         {
-            SpawnAIActor(AIType.Guard, SpawnPointsOnMap[Random.Range(0, 4)]);
+            //SpawnAIActor(AIType.Guard, SpawnPointsOnMap[Random.Range(0, 4)]);
+            SetRandomAgentNewDestination();
+
         }
     }
 
-
-    private void AssignAllAIAgentsToPatrolGroupA ()
+    public void Init()
     {
+        GatherSpawnPoints();
+        GatherPatrolPoints();
+        PopulateSpawnPoints();
+        SetWaypointAll();
 
     }
 
@@ -76,7 +74,7 @@ public class AIService : NetworkBehaviour
         }
     }
 
-    private void GatherControlPoints()
+    private void GatherPatrolPoints()
     {
         var pPoints = GameObject.FindGameObjectsWithTag("Waypoint");
 
@@ -89,18 +87,47 @@ public class AIService : NetworkBehaviour
     private void SpawnAIActor(AIType type, SpawnPoint point)
     {
         var aiGuard = Instantiate(GuardAIPrefab);
+        aiGuard.transform.SetParent(AIActorRoot);
 
         var spawnPos = point.transform.position;
+
         spawnPos.y = 0;
 
         var navMesh = aiGuard.GetComponent<NavMeshAgent>();
+        var aiScript = aiGuard.GetComponent<AIGuard>();
 
-        ActiveAiAgents.Add(aiGuard.GetComponent<AIGuard>());
-
-        aiGuard.transform.SetParent(AIActorRoot);
-
+        ActiveAiAgents.Add(aiScript);
         navMesh.Warp(spawnPos);
+
+        aiGuard.gameObject.SetActive(true);
+
+        Debug.Log("Spawned AI Actor");
+        //var patrolPoint = aiScript.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
+
+
+        //while (patrolPoint == null)
+        //{
+        //    patrolPoint = aiScript.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
+        //}
+
+        //NetworkServer.Spawn(aiGuard);
     }
+
+    public void SetRandomAgentNewDestination()
+    {
+        var guard = (AIGuard)ActiveAiAgents[Random.Range(0, ActiveAiAgents.Count)];
+        var guardScript = guard.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
+        Debug.Log("Set Random New Destination");
+    }
+
+    public void SetWaypointAll()
+    {
+        foreach (AIGuard ai in ActiveAiAgents)
+        {
+            SetRandomPatrolPoint(ai);
+        }
+    }
+
 
     #endregion
 
@@ -114,12 +141,12 @@ public class AIService : NetworkBehaviour
         StopCoroutine("PatrolClockIterator");
     }
 
-    private AIBase GetRandomGuard ()
+    private AIBase GetRandomGuard()
     {
         return null;
     }
 
-    private static PatrolPoint GetRandomPatrolPoint ()
+    private static PatrolPoint GetRandomPatrolPoint()
     {
         foreach (var patrolPoint in PatrolPointsOnMap)
         {
@@ -131,7 +158,12 @@ public class AIService : NetworkBehaviour
         return null;
     }
 
-    private IEnumerator PatrolClockIterator (int randomNumberFromSeed)
+    private void SetRandomPatrolPoint(AIGuard ai)
+    {
+        ai.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
+    }
+
+    private IEnumerator PatrolClockIterator(int randomNumberFromSeed)
     {
         var tickValue = Random.Range(0, PatrolShiftMovementRigidity);
 

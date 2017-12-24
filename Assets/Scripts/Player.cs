@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using DG.Tweening;
+using Cinemachine;
 
 public class Player : ActorMobile
 {
@@ -16,8 +17,9 @@ public class Player : ActorMobile
 
         GetComponent<PlayerMovement>().enabled = true;
         GetComponent<Inventory>().enabled = true;
-
-        SpawnCamera();
+        var cmScript = GameObject.FindGameObjectWithTag("WPPathfinder").GetComponent<CinemachineVirtualCamera>();
+        cmScript.Follow = transform;
+        //SpawnCamera();
 
         //SpawnCursor();
         //PlayerCamera.gameObject.GetComponent<CameraFollow>().Init(transform);

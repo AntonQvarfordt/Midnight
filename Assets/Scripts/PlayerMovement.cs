@@ -169,7 +169,7 @@ public class PlayerMovement : NetworkBehaviour
         GetComponent<Animator>().SetTrigger("Dodge");
         var targetPos = transform.position + (transform.forward * DodgeDistance);
         _rigidbody.isKinematic = true;
-        transform.DOMove(targetPos, 0.55f).SetEase(Ease.InQuad).OnComplete(DodgeRollComplete);
+        transform.DOMove(targetPos, 0.7f).SetEase(Ease.Linear).OnComplete(DodgeRollComplete);
         
     }
 

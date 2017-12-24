@@ -65,8 +65,16 @@ public class GameManager : NetworkManager
         return prefabs.ToList();
     }
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        Debug.Log("Start Server");
+        AIService.Instance.Init();
+    }
+
     public void HostGame()
     {
         StartHost();
+        Debug.Log("Host Game");
     }
 }
