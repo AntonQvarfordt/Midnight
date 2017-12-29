@@ -45,6 +45,12 @@ public class AIService : NetworkBehaviour
         }
     }
 
+    private void Start()
+    {
+        GatherSpawnPoints();
+        GatherPatrolPoints();
+    }
+
     public void Init()
     {
         GatherSpawnPoints();

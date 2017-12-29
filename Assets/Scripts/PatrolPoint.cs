@@ -18,14 +18,23 @@ public class PatrolPoint : MonoBehaviour
     [Range(0, 100)]
     public float Weight = 50;
 
-    public bool AssignOccupant (AIBase occupant)
+    public bool AssignOccupant (AIGuard occupant)
     {
         if (Occupied)
             return false;
 
+        if (occupant.AssignedPoint != null)
+            occupant.AssignedPoint.Clear();
+
         Occupied = true;
         _occupant = occupant;
         return true;
+    }
+
+    public void Clear ()
+    {
+        _occupant = null;
+        Occupied = false;
     }
 
     void OnDrawGizmos()

@@ -69,7 +69,7 @@ public class GameManager : NetworkManager
     {
         base.OnStartServer();
         Debug.Log("Start Server");
-        AIService.Instance.Init();
+        //AIService.Instance.Init();
     }
 
     public void HostGame()

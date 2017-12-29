@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MovementState
+{
+    Idle,
+    Walking,
+    Running,
+    Other
+}
+
 public class AIGuard : AIBase
 {
+    public delegate void MovementStateChanged(MovementState moveState);
+    public MovementStateChanged OnMovementStateChanged;
+
+    public MovementState MoveState;
+
     public LayerMask FloorMask;
 
     [SerializeField]
-    private bool _atDestination;
+    private bool _atDestination = true;
 
     public PatrolPoint AssignedPoint;
 
@@ -20,56 +33,53 @@ public class AIGuard : AIBase
     {
         if (!_atDestination)
         {
-            DestinationCheck();
+            if (Agent.hasPath)
+                DestinationCheck();
         }
     }
 
     private void DestinationCheck()
     {
-        Debug.DrawLine(transform.position, Agent.destination);
-        if (Agent.remainingDistance < Agent.stoppingDistance)
+        if (Agent.remainingDistance - 0.05f <= Agent.stoppingDistance)
         {
             _atDestination = true;
             OnDestinationReached();
         }
     }
 
-    public void MoveToPosition (Vector3 position)
+    public void WalkToPosition(Vector3 position)
     {
-
-        //Agent.ResetPath();
-        //Agent.CalculatePath(position, Agent.path);
-        Debug.Log(position);
-        Debug.Log(Agent.destination);
-
-        Agent.Move(position);
+        Agent.SetDestination(position);
 
         _atDestination = false;
-        Debug.Log("AI Guard Moving To Destination");
     }
 
-    public void MoveToPatrolPoint (PatrolPoint point)
+    public PatrolPoint SetRandomPatrolDestination(PatrolPoint[] randomBetween)
     {
-        Agent.Move(point.transform.position);
-    }
+        AssignedPoint = randomBetween[Random.Range(0, randomBetween.Length)];
 
-    public PatrolPoint SetRandomPatrolDestination (PatrolPoint[] randomBetween)
-    {
-        var newPatrolPoint = randomBetween[Random.Range(0, randomBetween.Length)];
-
-        if (newPatrolPoint.Occupied)
+        if (AssignedPoint.Occupied)
             return null;
 
-        newPatrolPoint.AssignOccupant(this);
-        AssignedPoint = newPatrolPoint;
+        AssignedPoint.AssignOccupant(this);
 
-        MoveToPosition(newPatrolPoint.transform.position);
+        ChangeMovementState(MovementState.Walking);
 
-        return newPatrolPoint;
+        WalkToPosition(AssignedPoint.transform.position);
+
+        return AssignedPoint;
     }
 
-    private void OnDestinationReached ()
+    private void OnDestinationReached()
     {
         Debug.Log("AI Guard Destination Reached");
+        //if (MoveState == MovementState.Walking)
+        OnMovementStateChanged(MovementState.Idle);
+    }
+
+    public void ChangeMovementState(MovementState state)
+    {
+        MoveState = state;
+        OnMovementStateChanged(state);
     }
 }
