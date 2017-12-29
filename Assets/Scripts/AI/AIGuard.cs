@@ -30,18 +30,16 @@ public class AIGuard : AIBase
     public AIState State;
     public MovementState MoveState;
 
-    public LayerMask FloorMask;
+    private LayerMask _floorMask;
 
     [SerializeField]
     private bool _atDestination = true;
-
-
-
     private TimerInvoke _timerBehaviour;
 
     public override void Awake()
     {
         base.Awake();
+        _floorMask = LayerMask.NameToLayer("Floor");
         _timerBehaviour = gameObject.TimerInvokeInit();
     }
 
@@ -52,12 +50,12 @@ public class AIGuard : AIBase
             if (!_atDestination)
             {
                 if (Agent.hasPath)
-                    DestinationCheck();
+                    PatrolDestinationCheck();
             }
         }
     }
 
-    private void DestinationCheck()
+    private void PatrolDestinationCheck()
     {
         if (Agent.remainingDistance - 0.05f <= Agent.stoppingDistance)
         {

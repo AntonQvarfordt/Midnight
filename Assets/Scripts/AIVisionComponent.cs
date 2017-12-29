@@ -66,6 +66,7 @@ public class AIVisionComponent : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(delay);
+            Debug.Log("FindVisTar");
             FindVisibleTargets();
         }
     }
