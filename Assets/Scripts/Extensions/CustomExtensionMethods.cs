@@ -59,4 +59,10 @@ public static class CustomExtensionMethods
 
         Debug.Log("DrawLine");
     }
+
+    public static TimerInvoke TimerInvokeInit(this GameObject go)
+    {
+        var returnValue = go.AddComponent<TimerInvoke>();
+        return returnValue;
+    }
 }

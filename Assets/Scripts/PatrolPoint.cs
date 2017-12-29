@@ -18,17 +18,14 @@ public class PatrolPoint : MonoBehaviour
     [Range(0, 100)]
     public float Weight = 50;
 
-    public bool AssignOccupant (AIGuard occupant)
+    public PatrolPoint AssignOccupant (AIGuard occupant)
     {
-        if (Occupied)
-            return false;
-
         if (occupant.AssignedPoint != null)
             occupant.AssignedPoint.Clear();
 
         Occupied = true;
         _occupant = occupant;
-        return true;
+        return this;
     }
 
     public void Clear ()
@@ -39,9 +36,10 @@ public class PatrolPoint : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        var cPos = transform.position;
-        //cPos.y = 0.05f;
-        Gizmos.DrawWireCube(cPos, new Vector3(0.1f, 0.1f, 0.1f));
+        Gizmos.DrawIcon(transform.position, "patrolPoint_gzmo", false);
+        //Gizmos.color = Color.yellow;
+        //var cPos = transform.position;
+        ////cPos.y = 0.05f;
+        //Gizmos.DrawWireCube(cPos, new Vector3(0.1f, 0.1f, 0.1f));
     }
 }

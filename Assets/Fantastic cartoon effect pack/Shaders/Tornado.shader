@@ -17,7 +17,8 @@ Shader "Tornado" {
     }
     SubShader {
         Tags {
-            "RenderType"="Opaque"
+            "Queue"="AlphaTest"
+            "RenderType"="TransparentCutout"
         }
         Pass {
             Name "FORWARD"
@@ -54,11 +55,13 @@ Shader "Tornado" {
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                float2 texcoord0 : TEXCOORD0;
+                float4 texcoord0 : TEXCOORD0;
+				fixed4 color : COLOR;
             };
             struct VertexOutput {
                 float4 pos : SV_POSITION;
-                float2 uv0 : TEXCOORD0;
+                float4 uv0 : TEXCOORD0;
+				fixed4 color : COLOR;
                 float4 posWorld : TEXCOORD1;
                 float3 normalDir : TEXCOORD2;
 				float height : TEXCOORD3;
@@ -70,6 +73,7 @@ Shader "Tornado" {
                 o.normalDir = UnityObjectToWorldNormal(v.normal);
                 float4 node_6764 = _Time + _TimeEditor;
                 float h = o.uv0.g;
+				o.color = v.color * _TintColor;
                 v.vertex.xyz += ((sin((_Numberofwawes*(mul(unity_ObjectToWorld, v.vertex).g.r+(node_6764.g*_DirectionSpeedofwawes))*6.28318530718))*h.r)*v.normal*_Sizeofwawes);
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
 				float3 worldpos = mul(unity_ObjectToWorld, v.vertex).xyz;
@@ -92,7 +96,8 @@ Shader "Tornado" {
                 float4 node_4620 = _Time + _TimeEditor;
                 float2 node_5411 = ((i.uv0+(node_4620.g*_U_Speed)*float2(1,0))+(node_4620.g*_V_Speed)*float2(0,1));
                 float4 node_9700 = tex2D(_MainTex,TRANSFORM_TEX(node_5411, _MainTex));
-                float3 node_4951 = (_TintColor.rgb*node_9700.rgb*_EmmisionStrench);
+				clip((dot(node_9700.rgb,float3(0.3,0.59,0.11))*i.uv0.b) - 0.5);
+                float3 node_4951 = (_TintColor.rgb*i.color*node_9700.rgb*_EmmisionStrench);
                 float3 node_2916 = (pow(1.0-max(0,dot(normalDirection, viewDirection)),_FresnelStrench)*_FrenselColor.rgb);
                 float3 emissive = lerp( node_4951, (node_4951+saturate((node_2916*node_2916*_FresnelOutline))), _Fresnel );
                 float3 finalColor = emissive;

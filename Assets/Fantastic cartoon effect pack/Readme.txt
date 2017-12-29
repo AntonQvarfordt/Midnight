@@ -1,4 +1,4 @@
-Pack includes 12 effect prefabs. 
+Pack includes 19 effect prefabs. 
 
 NOTE:
 
@@ -7,6 +7,5 @@ with help of Post Processing behaviour script.
 
 Using effects:
 Just drag and drop prefab of effect on scene and use that :)
-In play mode: Drag the object to the folder with the desired color. Sometimes it will be necessary to change the color of the material.
 
 

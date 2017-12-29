@@ -164,7 +164,7 @@ public class AIService : NetworkBehaviour
         return null;
     }
 
-    private void SetRandomPatrolPoint(AIGuard ai)
+    public void SetRandomPatrolPoint(AIGuard ai)
     {
         ai.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
     }

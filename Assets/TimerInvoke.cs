@@ -5,8 +5,11 @@ using UnityEngine.Events;
 
 public class TimerInvoke : MonoBehaviour {
 
+    [SerializeField]
     private float _timerDurationFull;
+    [SerializeField]
     private float _timeLeft;
+    [SerializeField]
     private UnityAction[] _actions;
 
     public UnityAction SetTimedInvoke (float rangeA, float rangeB, UnityAction[] actions)

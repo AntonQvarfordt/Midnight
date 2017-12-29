@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using DG.Tweening;
 
 public enum MovementState
 {
@@ -10,11 +12,22 @@ public enum MovementState
     Other
 }
 
+public enum AIState
+{
+    Patrolling,
+    Chasing,
+    Shooting,
+    Dead
+}
+
 public class AIGuard : AIBase
 {
     public delegate void MovementStateChanged(MovementState moveState);
     public MovementStateChanged OnMovementStateChanged;
 
+    public PatrolPoint AssignedPoint;
+
+    public AIState State;
     public MovementState MoveState;
 
     public LayerMask FloorMask;
@@ -22,19 +35,25 @@ public class AIGuard : AIBase
     [SerializeField]
     private bool _atDestination = true;
 
-    public PatrolPoint AssignedPoint;
+
+
+    private TimerInvoke _timerBehaviour;
 
     public override void Awake()
     {
         base.Awake();
+        _timerBehaviour = gameObject.TimerInvokeInit();
     }
 
     private void Update()
     {
-        if (!_atDestination)
+        if (State == AIState.Patrolling)
         {
-            if (Agent.hasPath)
-                DestinationCheck();
+            if (!_atDestination)
+            {
+                if (Agent.hasPath)
+                    DestinationCheck();
+            }
         }
     }
 
@@ -56,12 +75,14 @@ public class AIGuard : AIBase
 
     public PatrolPoint SetRandomPatrolDestination(PatrolPoint[] randomBetween)
     {
-        AssignedPoint = randomBetween[Random.Range(0, randomBetween.Length)];
+        var newPoint = randomBetween[Random.Range(0, randomBetween.Length)];
 
-        if (AssignedPoint.Occupied)
-            return null;
+        while (newPoint.Occupied)
+        {
+            newPoint = randomBetween[Random.Range(0, randomBetween.Length)];
+        }
 
-        AssignedPoint.AssignOccupant(this);
+        AssignedPoint = newPoint.AssignOccupant(this);
 
         ChangeMovementState(MovementState.Walking);
 
@@ -75,6 +96,12 @@ public class AIGuard : AIBase
         Debug.Log("AI Guard Destination Reached");
         //if (MoveState == MovementState.Walking)
         OnMovementStateChanged(MovementState.Idle);
+        var moveActions = new UnityAction[1];
+        moveActions[0] = new UnityAction(() => AIService.Instance.SetRandomPatrolPoint(this));
+        var cancelTimerCallback = _timerBehaviour.SetTimedInvoke(1, 6, moveActions);
+
+        if (AssignedPoint != null)
+            transform.DOLocalRotate(AssignedPoint.transform.localRotation.eulerAngles, 0.5f);
     }
 
     public void ChangeMovementState(MovementState state)
