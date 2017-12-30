@@ -66,7 +66,6 @@ public class AIVisionComponent : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(delay);
-            Debug.Log("FindVisTar");
             FindVisibleTargets();
         }
     }
@@ -218,5 +217,17 @@ public class AIVisionComponent : MonoBehaviour
     public List<Transform> GetVisibleTargets ()
     {
         return visibleTargets;
+    }
+
+    public List<ActorMobile> GetVisibleMobileActors()
+    {
+        var returnList = new List<ActorMobile>();
+        foreach (Transform target in visibleTargets)
+        {
+            var tScript = target.GetComponent<ActorMobile>();
+            if (tScript != null)
+                returnList.Add(tScript);
+        }
+        return returnList;
     }
 }

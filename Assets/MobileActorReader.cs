@@ -22,11 +22,24 @@ public class MobileActorReader : MonoBehaviour
     private void OnEnable()
     {
         AIGuardReference.OnMovementStateChanged += OMovementStateChanged;
+        AIGuardReference.OnAIStateChanged += OnStateChanged;
     }
 
     private void OnDisable()
     {
         AIGuardReference.OnMovementStateChanged -= OMovementStateChanged;
+        AIGuardReference.OnAIStateChanged -= OnStateChanged;
+    }
+
+    void Update()
+    {
+        _deltaPos = transform.position - _lastPos;
+        Speed = _deltaPos.magnitude * 100 * Time.fixedDeltaTime;
+    }
+
+    private void LateUpdate()
+    {
+        _lastPos = transform.position;
     }
 
     private void OMovementStateChanged(MovementState state)
@@ -54,6 +67,30 @@ public class MobileActorReader : MonoBehaviour
         }
     }
 
+    private void OnStateChanged(AIState state)
+    {
+        ResetAnimationParameters();
+
+        Debug.Log("OnStateChanged " + state.ToString());
+
+        switch (state)
+        {
+            case AIState.Patrolling:
+                AnimatorReference.SetBool("GunDrawn", false);
+                break;
+            case AIState.Chasing:
+                AnimatorReference.SetBool("GunDrawn", true);
+                break;
+            case AIState.Shooting:
+                AnimatorReference.SetBool("GunDrawn", true);
+                break;
+            case AIState.Dead:
+                break;
+            default:
+                break;
+        }
+    }
+
     private void ResetAnimationParameters()
     {
         AnimatorReference.SetBool("Idle", false);
@@ -61,14 +98,5 @@ public class MobileActorReader : MonoBehaviour
         AnimatorReference.SetBool("Walking", false);
     }
 
-    void Update()
-    {
-        _deltaPos = transform.position - _lastPos;
-        Speed = _deltaPos.magnitude * 100 * Time.fixedDeltaTime;
-    }
 
-    private void LateUpdate()
-    {
-        _lastPos = transform.position;
-    }
 }

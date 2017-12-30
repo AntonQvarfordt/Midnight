@@ -14,6 +14,9 @@ ModelImporter:
     100012: walls
     100014: navMesh_floor
     100016: walls_navMesh
+    100018: geo_wallfloor_floor
+    100020: wall_geo_wallfloor
+    100022: MapMesh_1_root
     400000: floor_level
     400002: level_walls
     400004: //RootNode
@@ -23,6 +26,9 @@ ModelImporter:
     400012: walls
     400014: navMesh_floor
     400016: walls_navMesh
+    400018: geo_wallfloor_floor
+    400020: wall_geo_wallfloor
+    400022: MapMesh_1_root
     2300000: floor_level
     2300002: level_walls
     2300004: floor_level_floor1
@@ -31,6 +37,8 @@ ModelImporter:
     2300010: walls
     2300012: navMesh_floor
     2300014: walls_navMesh
+    2300016: geo_wallfloor_floor
+    2300018: wall_geo_wallfloor
     3300000: floor_level
     3300002: level_walls
     3300004: floor_level_floor1
@@ -39,6 +47,8 @@ ModelImporter:
     3300010: walls
     3300012: navMesh_floor
     3300014: walls_navMesh
+    3300016: geo_wallfloor_floor
+    3300018: wall_geo_wallfloor
     4300000: floor_level
     4300002: level_walls
     4300004: floor_level_floor1
@@ -47,6 +57,8 @@ ModelImporter:
     4300010: walls
     4300012: navMesh_floor
     4300014: walls_navMesh
+    4300016: geo_wallfloor_floor
+    4300018: wall_geo_wallfloor
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -98,19 +110,19 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 0
+    meshCompression: 1
     addColliders: 0
-    importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
-    preserveHierarchy: 0
+    preserveHierarchy: 1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001

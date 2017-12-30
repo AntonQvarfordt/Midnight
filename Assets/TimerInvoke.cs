@@ -30,6 +30,7 @@ public class TimerInvoke : MonoBehaviour {
         while (timePool > 0)
         {
             timePool--;
+            _timeLeft -= updateFrequencySeconds;
             yield return new WaitForSeconds(updateFrequencySeconds);
         }
 

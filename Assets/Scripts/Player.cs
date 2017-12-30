@@ -10,6 +10,17 @@ public class Player : ActorMobile
     private Camera _playerCamera;
     public CursorController PlayerCursor;
 
+    public void OnDisable()
+    {
+
+        Invoke("DelayedActivate", 2);
+    }
+
+    private void DelayedActivate ()
+    {
+        gameObject.SetActive(true);
+    }
+
     public override void OnStartLocalPlayer()
     {
         if (!isLocalPlayer)
@@ -20,11 +31,11 @@ public class Player : ActorMobile
         var cmScript = GameObject.FindGameObjectWithTag("WPPathfinder").GetComponent<CinemachineVirtualCamera>();
         cmScript.Follow = transform;
         //SpawnCamera();
-
         //SpawnCursor();
         //PlayerCamera.gameObject.GetComponent<CameraFollow>().Init(transform);
         //GetComponent<FaceTargetRotator>().Init(PlayerCamera);
         //PlayerCursor.GetComponent<CursorController>().enabled = true;
+        gameObject.SetActive(true);
     }
 
     private void SpawnCursor()
@@ -34,7 +45,12 @@ public class Player : ActorMobile
         //PlayerCursor = cursor.GetComponent<CursorController>();
     }
 
-    private void SpawnCamera ()
+    private void Awake()
+    {
+
+    }
+
+    private void SpawnCamera()
     {
         if (Camera.main != null)
             Camera.main.gameObject.SetActive(false);

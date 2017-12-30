@@ -79,10 +79,7 @@ public class PlayerMovement : NetworkBehaviour
         }
 
 
-        bool isBlocked = IsBlockedByObstacle();
 
-		if (isBlocked)
-			return;
     }
 
     private void CalculateDeltaPos ()
@@ -95,6 +92,11 @@ public class PlayerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
+        bool isBlocked = IsBlockedByObstacle();
+
+        if (isBlocked)
+            return;
+
         _rigidbody.MovePosition(transform.position+=movement);
         CalculateDeltaPos();
     }
@@ -116,7 +118,7 @@ public class PlayerMovement : NetworkBehaviour
 		{
 			var sh = (RaycastHit)sightHit;
 #if UNITY_EDITOR
-			Debug.DrawLine(transform.position, sh.transform.position, Color.red);
+			Debug.DrawLine(transform.position, sh.transform.position, Color.red, 1);
 #endif
 			return true;
 		}
@@ -160,12 +162,16 @@ public class PlayerMovement : NetworkBehaviour
     private void DodgeRoll ()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, DodgeDistance))
+        var rayStartPos = transform.position;
+        rayStartPos.y = 1;
+        Debug.DrawRay(rayStartPos, transform.forward * DodgeDistance, Color.red, 2);
+        if (Physics.Raycast(rayStartPos, transform.forward, out hit, DodgeDistance))
         {
             Debug.Log(hit.transform.name);
             return;
         }
         BlockMovement();
+
         GetComponent<Animator>().SetTrigger("Dodge");
         var targetPos = transform.position + (transform.forward * DodgeDistance);
         _rigidbody.isKinematic = true;

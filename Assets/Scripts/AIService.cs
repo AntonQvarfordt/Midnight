@@ -68,8 +68,6 @@ public class AIService : NetworkBehaviour
         {
             SpawnPointsOnMap.Add(pObj.GetComponent<SpawnPoint>());
         }
-
-        StartPatrolShiftClock();
     }
 
     private void PopulateSpawnPoints()
@@ -108,14 +106,12 @@ public class AIService : NetworkBehaviour
         aiGuard.gameObject.SetActive(true);
 
         Debug.Log("Spawned AI Actor");
+
         //var patrolPoint = aiScript.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
-
-
         //while (patrolPoint == null)
         //{
         //    patrolPoint = aiScript.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
         //}
-
         //NetworkServer.Spawn(aiGuard);
     }
 
@@ -134,19 +130,7 @@ public class AIService : NetworkBehaviour
         }
     }
 
-
     #endregion
-
-    private void StartPatrolShiftClock()
-    {
-        StartCoroutine("PatrolClockIterator", PatrolShiftMovementRigidity);
-    }
-
-    private void StopPatrolShiftClock()
-    {
-        StopCoroutine("PatrolClockIterator");
-    }
-
     private AIBase GetRandomGuard()
     {
         return null;
@@ -167,17 +151,5 @@ public class AIService : NetworkBehaviour
     public void SetRandomPatrolPoint(AIGuard ai)
     {
         ai.SetRandomPatrolDestination(PatrolPointsOnMap.ToArray());
-    }
-
-    private IEnumerator PatrolClockIterator(int randomNumberFromSeed)
-    {
-        var tickValue = Random.Range(0, PatrolShiftMovementRigidity);
-
-        while (tickValue != 1)
-        {
-            Debug.Log("Clock Tick " + tickValue);
-            yield return new WaitForSeconds(4);
-            tickValue = Random.Range(0, PatrolShiftMovementRigidity);
-        }
     }
 }
