@@ -22,28 +22,34 @@ public enum AIState
 
 public class AIGuard : AIBase
 {
+
+    public float AttackMaxRange;
+
     public delegate void MovementStateChanged(MovementState moveState);
     public MovementStateChanged OnMovementStateChanged;
     public delegate void AIStateChanged(AIState moveState);
     public AIStateChanged OnAIStateChanged;
-
-    public List<Player> TargetList;
-    public Player ActiveTarget;
-
     public bool GunDrawn;
-
-    public PatrolPoint AssignedPoint;
 
     public AIState State;
     public MovementState MoveState;
 
-    private LayerMask _floorMask;
+    [HideInInspector]
+    public PatrolPoint AssignedPoint;
+    //[SerializeField]
+    //private bool _hasActiveTarget;
 
     [SerializeField]
+    private Player ActiveTarget = null;
+    private LayerMask _floorMask;
+
     private bool _atDestination = true;
     private TimerInvoke _timerBehaviour;
     private AIVisionComponent _visionComponent;
-    private bool _hasActiveTarget;
+
+    private float _walkSpeed = 1.7f;
+    private float _runSpeed = 2.7f;
+    private List<Player> _targetList = new List<Player>();
 
     public override void Awake()
     {
@@ -51,6 +57,7 @@ public class AIGuard : AIBase
         _floorMask = LayerMask.NameToLayer("Floor");
         _timerBehaviour = gameObject.TimerInvokeInit();
         _visionComponent = GetComponent<AIVisionComponent>();
+        _targetList.Add(GameObject.FindGameObjectWithTag("Player").GetComponent<Player>());
     }
 
     private void Update()
@@ -60,20 +67,19 @@ public class AIGuard : AIBase
         {
             #region patrolUpdate
             case AIState.Patrolling:
+
                 if (!_atDestination && Agent.hasPath)
                 {
                     if (CheckPatrolDestinationReached())
                         OnDestinationReached();
-
                 }
 
-                if (!_hasActiveTarget)
-                {
-                    ActiveTarget = CheckForHostile();
-                    if (ActiveTarget != null)
-                        OnHostileFound();
-                }
+                ActiveTarget = CheckForHostile();
 
+                if (ActiveTarget != null)
+                    OnHostileFound();
+
+                Debug.Log("Patrol-UpdateFin");
                 break;
             #endregion
             case AIState.Chasing:
@@ -83,14 +89,22 @@ public class AIGuard : AIBase
                 if (ActiveTarget == null)
                     break;
 
-                    targetInSight = CheckIfActiveTargetInView();
+                targetInSight = CheckIfActiveTargetInSight();
 
                 if (!targetInSight)
                 {
                     OnHostileLost();
                     SwitchState(AIState.Patrolling);
-
+                    break;
                 }
+
+                if (CheckIfActiveTargetInFiringRange())
+                {
+                    SwitchState(AIState.Shooting);
+                    break;
+                }
+
+                Debug.Log("Chasing-UpdateFin");
 
                 break;
         }
@@ -117,15 +131,13 @@ public class AIGuard : AIBase
         switch (state)
         {
             case AIState.Patrolling:
-                State = AIState.Patrolling;
                 PatrolEnter();
                 break;
             case AIState.Chasing:
-                State = AIState.Chasing;
                 ChasingEnter();
                 break;
             case AIState.Shooting:
-                State = AIState.Shooting;
+
                 ShootingEnter();
                 break;
             case AIState.Dead:
@@ -190,48 +202,77 @@ public class AIGuard : AIBase
             transform.DOLocalRotate(AssignedPoint.transform.localRotation.eulerAngles, 0.5f);
     }
 
-    private void OnHostileFound()
-    {
-        Debug.Log("OnHostileFound");
-        _hasActiveTarget = true;
-        SwitchState(AIState.Chasing);
-    }
-
-    private void OnHostileLost ()
-    {
-        _hasActiveTarget = false;
-        ActiveTarget = null;
-    }
-
-    private bool CheckIfActiveTargetInView()
-    {
-        return _visionComponent.GetVisibleMobileActors().Contains(ActiveTarget);
-    }
-
     private Player CheckForHostile()
     {
         var visibleTargets = _visionComponent.GetVisibleTargets();
+
         foreach (var target in visibleTargets)
         {
             var t = (Player)target.GetComponent<ActorMobile>();
 
-            if (t != null)
-            {
-                if (!TargetList.Contains(t))
-                    continue;
+            if (t == null)
+                continue;
 
-                return t;
-            }
+            if (!_targetList.Contains(t))
+                continue;
+
+            return t;
+
         }
 
         return null;
     }
 
+    private void OnHostileFound()
+    {
+        Debug.Log("OnHostileFound");
+        SwitchState(AIState.Chasing);
+    }
+
     #endregion
+
+    #region Chasing
+
+    private void ChasingEnter()
+    {
+
+        State = AIState.Chasing;
+        ChangeMovementState(MovementState.Running);
+        Agent.stoppingDistance = AttackMaxRange;
+
+    }
+
+    private void ChasingExit()
+    {
+        Agent.speed = _walkSpeed;
+        ChangeMovementState(MovementState.Idle);
+    }
+
+    private bool CheckIfActiveTargetInSight()
+    {
+        return _visionComponent.GetVisibleMobileActors().Contains(ActiveTarget);
+    }
+
+    private bool CheckIfActiveTargetInFiringRange()
+    {
+        if (Vector3.Distance(transform.position, ActiveTarget.transform.position) <= AttackMaxRange)
+            return true;
+        else
+            return false;
+    }
+
+    private void OnHostileLost()
+    {
+        ActiveTarget = null;
+    }
+
+    #endregion
+
+    #region Shooting;
 
     private void ShootingEnter()
     {
-
+        State = AIState.Shooting;
     }
 
     private void ShootingExit()
@@ -239,15 +280,7 @@ public class AIGuard : AIBase
 
     }
 
-    private void ChasingExit()
-    {
-
-    }
-
-    private void ChasingEnter()
-    {
-        State = AIState.Chasing;
-    }
+    #endregion
 
     private void WalkToPosition(Vector3 position)
     {
@@ -256,10 +289,20 @@ public class AIGuard : AIBase
         _atDestination = false;
     }
 
-
-
     public void ChangeMovementState(MovementState state)
     {
+        switch (state)
+        {
+            case MovementState.Idle:
+                break;
+            case MovementState.Walking:
+                break;
+            case MovementState.Running:
+                break;
+            case MovementState.Other:
+                break;
+        }
+
         MoveState = state;
         OnMovementStateChanged(state);
     }

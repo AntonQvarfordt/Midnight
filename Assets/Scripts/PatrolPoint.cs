@@ -7,7 +7,7 @@ public class PatrolPoint : MonoBehaviour
     public bool Occupied;
     public bool Disabled;
     public int FloorLevel;
-
+    [SerializeField]
     private AIBase _occupant;
 
     public AIBase GetOccupant 
