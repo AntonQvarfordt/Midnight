@@ -72,19 +72,10 @@ public class PlayerMovement : NetworkBehaviour
 		SetMovement();
         FaceMovementDirection();
 
-
         if (Input.GetButtonDown("Dodge"))
         {
             DodgeRoll();
         }
-    }
-
-    private void CalculateDeltaPos ()
-    {
-        deltaPos = transform.position - savedPos;
-        deltaPos *= 10;
-        //Debug.Log(GetMovementSpeed);
-        savedPos = transform.position;
     }
 
     private void FixedUpdate()
@@ -94,8 +85,16 @@ public class PlayerMovement : NetworkBehaviour
         if (isBlocked)
             return;
 
-        _rigidbody.MovePosition(transform.position+=movement);
+        _rigidbody.MovePosition(transform.position += movement);
+
         CalculateDeltaPos();
+    }
+
+    private void CalculateDeltaPos ()
+    {
+        deltaPos = transform.position - savedPos;
+        deltaPos *= 10;
+        savedPos = transform.position;
     }
 
     public void BlockMovement ()
@@ -159,26 +158,33 @@ public class PlayerMovement : NetworkBehaviour
     private void DodgeRoll ()
     {
         RaycastHit hit;
+
         var rayStartPos = transform.position;
         rayStartPos.y = 1;
+
         Debug.DrawRay(rayStartPos, transform.forward * DodgeDistance, Color.red, 2);
+
         if (Physics.Raycast(rayStartPos, transform.forward, out hit, DodgeDistance))
         {
             Debug.Log(hit.transform.name);
             return;
         }
+
         BlockMovement();
 
         GetComponent<Animator>().SetTrigger("Dodge");
+
         var targetPos = transform.position + (transform.forward * DodgeDistance);
+
         _rigidbody.isKinematic = true;
-        transform.DOMove(targetPos, 0.7f).SetEase(Ease.Linear).OnComplete(DodgeRollComplete);
-        
+
+        transform.DOMove(targetPos, 1.1f).SetEase(Ease.Linear).OnComplete(DodgeRollComplete);
     }
 
     private void DodgeRollComplete()
     {
         _rigidbody.isKinematic = false;
+
         UnblockMovement();
     }
 

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
+﻿using UnityEngine;
 using DG.Tweening;
 using Cinemachine;
 
@@ -30,11 +27,6 @@ public class Player : ActorMobile
         GetComponent<Inventory>().enabled = true;
         var cmScript = GameObject.FindGameObjectWithTag("WPPathfinder").GetComponent<CinemachineVirtualCamera>();
         cmScript.Follow = transform;
-        //SpawnCamera();
-        //SpawnCursor();
-        //PlayerCamera.gameObject.GetComponent<CameraFollow>().Init(transform);
-        //GetComponent<FaceTargetRotator>().Init(PlayerCamera);
-        //PlayerCursor.GetComponent<CursorController>().enabled = true;
         gameObject.SetActive(true);
     }
 
@@ -43,11 +35,6 @@ public class Player : ActorMobile
         var cursor = Instantiate(GameManager.GetLocalPlayerPrefab("Cursor"));
         cursor.transform.SetParent(GameObject.Find("/Canvas").transform);
         //PlayerCursor = cursor.GetComponent<CursorController>();
-    }
-
-    private void Awake()
-    {
-
     }
 
     private void SpawnCamera()
